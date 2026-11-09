@@ -1,48 +1,45 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { editNotepad, deleteNotepad, getNotepadById } from "./notepad-crud";
+import { editNotepad, deleteNotepad } from "./notepad-crud";
 
 type EditNotepadFormProps = {
   id: number;
+  initialTitle: string;
+  initialDescription: string;
 };
 
-export function EditNotepadForm(props: EditNotepadFormProps) {
+export function EditNotepadForm({
+  id,
+  initialTitle,
+  initialDescription,
+}: EditNotepadFormProps) {
   const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState(initialTitle);
+  const [description, setDescription] = useState(initialDescription);
 
-  async function onSubmitNotepad(event) {
+  async function onSubmitNotepad(event: React.FormEvent) {
     event.preventDefault();
-    const resultado = await editNotepad(props.id, title, description);
+    const resultado = await editNotepad(id, title, description);
     if (resultado.sucesso) {
       toast.success(resultado.mensagem);
-      setTitle("");
-      setDescription("");
       router.push("/");
     } else {
       toast.error(resultado.mensagem);
     }
   }
 
-  async function loadNotepad(id: number) {
-    const notepad = await getNotepadById(id);
-    setTitle(notepad.title);
-    setDescription(notepad.description);
-  }
-
   async function onDeleteNotepad() {
-    const resultado = await deleteNotepad(props.id);
-    toast.success(resultado.mensagem);
-    setTitle("");
-    setDescription("");
-    router.push("/");
+    const resultado = await deleteNotepad(id);
+    if (resultado.sucesso) {
+      toast.success(resultado.mensagem);
+      router.push("/");
+    } else {
+      toast.error(resultado.mensagem);
+    }
   }
-
-  useEffect(() => {
-    loadNotepad(props.id);
-  }, [props.id]);
 
   return (
     <form
@@ -51,14 +48,14 @@ export function EditNotepadForm(props: EditNotepadFormProps) {
     >
       <h1 className="text-center font-bold text-xl">Editar anotação</h1>
       <input
-        className="border-gray-400 border-2 p-2 rounded-lg"
+        className="border-gray-400 border-2 p-2 rounded-lg text-black"
         type="text"
         placeholder="Título"
         value={title}
         onChange={(event) => setTitle(event.target.value)}
       />
       <textarea
-        className="border-gray-400 border-2 p-2 rounded-lg"
+        className="border-gray-400 border-2 p-2 rounded-lg text-black"
         placeholder="Descrição"
         value={description}
         onChange={(event) => setDescription(event.target.value)}
@@ -70,6 +67,7 @@ export function EditNotepadForm(props: EditNotepadFormProps) {
         Enviar
       </button>
       <button
+        type="button"
         className="border-gray-400 border-2 p-2 rounded-lg hover:cursor-pointer bg-red-700 hover:bg-red-900"
         onClick={onDeleteNotepad}
       >
