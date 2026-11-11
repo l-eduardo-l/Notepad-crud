@@ -1,6 +1,8 @@
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 // Lista todas as anotações
 export async function listNotepads() {
@@ -19,7 +21,11 @@ export async function getNotepadById(id: number) {
 }
 
 // Cria uma nova anotação
-export async function createNotepad(title: string, description: string) {
+export async function createNotepad(
+  title: string,
+  description: string,
+  content: string,
+) {
   if (title.length < 4) {
     return {
       sucesso: false,
@@ -46,6 +52,7 @@ export async function createNotepad(title: string, description: string) {
     data: {
       title,
       description,
+      content,
     },
   });
 
@@ -60,6 +67,7 @@ export async function editNotepad(
   id: number,
   title: string,
   description: string,
+  content: string,
 ) {
   if (title.length < 4) {
     return {
@@ -84,7 +92,7 @@ export async function editNotepad(
   }
 
   await prisma.notepad.update({
-    data: { title, description },
+    data: { title, description, content },
     where: { id },
   });
 
@@ -94,14 +102,20 @@ export async function editNotepad(
   };
 }
 
-// Deleta uma anotação pelo id
+// Deleta uma anotação pelo id.
 export async function deleteNotepad(id: number) {
+  // Exclui a anotação do banco de dados.
   await prisma.notepad.delete({
     where: { id },
   });
 
+  // Atualiza a página inicial para refletir a exclusão.
+  revalidatePath("/");
+
+  // Retorna uma mensagem de sucesso.
   return {
     sucesso: true,
     mensagem: "A anotação foi deletada com sucesso!",
   };
 }
+

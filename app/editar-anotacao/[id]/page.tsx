@@ -1,3 +1,4 @@
+
 import { getNotepadById } from "../../notepad-crud";
 import { EditNotepadForm } from "../../edit-notepad-form";
 
@@ -12,6 +13,7 @@ export default async function EditNotepadPage({ params }: PageProps) {
   const notepadId = Number(resolvedParams.id);
 
   const notepad = await getNotepadById(notepadId);
+
   return (
     <div className="flex items-center justify-center w-full h-full">
       <div className="border-2 p-4 rounded-xl border-gray-400">
@@ -19,6 +21,7 @@ export default async function EditNotepadPage({ params }: PageProps) {
           id={notepadId}
           initialTitle={notepad.title}
           initialDescription={notepad.description}
+          initialContent={notepad.content}
         />
       </div>
     </div>
