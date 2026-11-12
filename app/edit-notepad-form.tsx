@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { editNotepad, deleteNotepad } from "./notepad-crud";
 
+// Define quais informações o formulário precisa receber. ( informação chega através das props )
 type EditNotepadFormProps = {
   id: number;
   initialTitle: string;
@@ -13,21 +14,27 @@ type EditNotepadFormProps = {
   initialContent: string;
 };
 
+
+// Recebe as informações de anotações atráves das props 
 export function EditNotepadForm({
   id,
   initialTitle,
   initialDescription,
   initialContent,
 }: EditNotepadFormProps) {
+
   const router = useRouter();
+
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
   const [content, setContent] = useState(initialContent);
 
   async function onSubmitNotepad(event: React.FormEvent) {
+    // isso aqui impede o carregamento automático da pagina 
     event.preventDefault();
     const resultado = await editNotepad(id, title, description, content);
 
+    // Faz a verificação das edições 
     if (resultado.sucesso) {
       toast.success(resultado.mensagem);
       router.push("/");
@@ -36,6 +43,7 @@ export function EditNotepadForm({
     }
   }
 
+  // Função que executa quando o usuário clica em Deletar. 
   async function onDeleteNotepad() {
     const resultado = await deleteNotepad(id);
 
@@ -47,6 +55,8 @@ export function EditNotepadForm({
     }
   }
 
+
+  
   return (
     <form
       onSubmit={onSubmitNotepad}

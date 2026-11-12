@@ -3,7 +3,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+
+// importa as notificações. 
 import { toast } from "react-toastify";
+
+// importa a função que salva as anotações. 
 import { createNotepad } from "./notepad-crud";
 
 export function CreateNotepadForm() {
@@ -16,6 +20,7 @@ export function CreateNotepadForm() {
     event.preventDefault();
     const resultado = await createNotepad(title, description, content);
 
+    // Validações, vai verificar se tudo foi criado com sucesso. 
     if (resultado.sucesso) {
       toast.success(resultado.mensagem);
       setTitle("");
@@ -27,6 +32,8 @@ export function CreateNotepadForm() {
     }
   }
 
+
+  // Estrutura que aparece na tela no front, aqui que recebemos as informações para validadr no back. 
   return (
     <form
       onSubmit={onSubmitNotepad}
@@ -57,6 +64,7 @@ export function CreateNotepadForm() {
         onChange={(event) => setContent(event.target.value)}
       />
 
+      {/* botão de submit para enviar a estrutura para a validaçõa, passando pelos IFs e criada a anotação no banco. */}
       <button
         className="border-gray-400 border-2 p-2 rounded-lg hover:cursor-pointer hover:bg-cyan-900"
         type="submit"

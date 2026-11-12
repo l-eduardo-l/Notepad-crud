@@ -1,6 +1,7 @@
 
 "use server";
 
+// Faz a conexão com o banco de dados. 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -20,12 +21,14 @@ export async function getNotepadById(id: number) {
   return notepad;
 }
 
-// Cria uma nova anotação
+// Função de criação de uma anotação 
 export async function createNotepad(
   title: string,
   description: string,
   content: string,
 ) {
+
+  // Validações 
   if (title.length < 4) {
     return {
       sucesso: false,
@@ -48,6 +51,7 @@ export async function createNotepad(
     };
   }
 
+  // Responsavel por crair uma nova anotação ( create envia os dados para o prisma )
   await prisma.notepad.create({
     data: {
       title,
@@ -62,13 +66,15 @@ export async function createNotepad(
   };
 }
 
-// Edita uma anotação pelo id
+// função que edita as anotações. 
 export async function editNotepad(
   id: number,
   title: string,
   description: string,
   content: string,
 ) {
+
+  // validação 
   if (title.length < 4) {
     return {
       sucesso: false,
@@ -91,6 +97,7 @@ export async function editNotepad(
     };
   }
 
+  // Responsavel por editar a anotação 
   await prisma.notepad.update({
     data: { title, description, content },
     where: { id },
@@ -102,7 +109,7 @@ export async function editNotepad(
   };
 }
 
-// Deleta uma anotação pelo id.
+// Deleta uma anotação pelo id. (função)
 export async function deleteNotepad(id: number) {
   // Exclui a anotação do banco de dados.
   await prisma.notepad.delete({
